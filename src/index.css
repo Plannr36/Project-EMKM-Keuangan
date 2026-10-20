@@ -3,9 +3,14 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    color: #0f172a;
-    background-color: #f8fafc;
+    color: #1e1b18;
+    background-color: #faf7f2;
     -webkit-font-smoothing: antialiased;
+  }
+
+  .font-serif-brand {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: "opsz" 32, "WONK" 1;
   }
 
   code, kbd, samp, pre, .font-mono {
@@ -13,6 +18,25 @@
     font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Custom receipt jagged edges for authentic thermal look */
+.receipt-paper {
+  background-color: #fffefb;
+  position: relative;
+  box-shadow: 0 4px 20px -2px rgba(40, 24, 10, 0.12);
+}
+
+.receipt-jagged-top {
+  background: radial-gradient(circle, transparent, transparent 4px, #fffefb 4.5px);
+  background-size: 10px 10px;
+  background-position: -5px -5px;
+}
+
+.receipt-jagged-bottom {
+  background: radial-gradient(circle, transparent, transparent 4px, #fffefb 4.5px);
+  background-size: 10px 10px;
+  background-position: -5px 0px;
 }
 
 /* Custom scrollbars for data tables */
@@ -24,9 +48,22 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d6cebf;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a89f8d;
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
 }

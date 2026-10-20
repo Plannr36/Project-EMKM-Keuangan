@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { FinancialStatementsData } from '../types/erp';
 import { formatRupiah } from '../utils/formatters';
+import { playTapSound } from '../utils/soundEffects';
 
 interface FinancialStatementsProps {
   financials: FinancialStatementsData;
@@ -29,8 +30,22 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
   const { laba_rugi, perubahan_ekuitas, neraca } = financials;
 
   const handlePrint = () => {
+    playTapSound();
     window.print();
   };
+
+  // Financial ratios calculation
+  const grossProfitMargin = laba_rugi.pendapatan_penjualan > 0
+    ? ((laba_rugi.laba_kotor / laba_rugi.pendapatan_penjualan) * 100).toFixed(1)
+    : '0.0';
+
+  const netProfitMargin = laba_rugi.pendapatan_penjualan > 0
+    ? ((laba_rugi.laba_bersih / laba_rugi.pendapatan_penjualan) * 100).toFixed(1)
+    : '0.0';
+
+  const currentRatio = neraca.liabilitas_jangka_pendek.total_liabilitas > 0
+    ? (neraca.aset_lancar.total_aset_lancar / neraca.liabilitas_jangka_pendek.total_liabilitas).toFixed(2)
+    : 'Bebas Utang';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -38,58 +53,70 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Laporan Keuangan Real-Time UMKM
+            <h2 className="text-2xl font-serif-brand font-bold text-stone-900 tracking-tight">
+              Laporan Keuangan SAK EMKM
             </h2>
-            <span className="text-xs text-slate-500">·</span>
-            <span className="text-xs font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-sm whitespace-nowrap shrink-0">
-              Langkah 5
+            <span className="text-xs text-stone-300">·</span>
+            <span className="text-[11px] font-mono text-emerald-900 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+              Langkah 5: Keseimbangan Otomatis
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Otomatis terbarui setiap kali ada transaksi kasir, perubahan stok FIFO, maupun pencatatan beban usaha
+          <p className="text-xs text-stone-600 mt-1">
+            Laporan keuangan resmi berstandar IAI untuk UMKM: Laba Rugi, Perubahan Ekuitas, dan Neraca Posisi Keuangan
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Sub-tabs */}
-          <div className="bg-slate-100 p-1 rounded-lg flex text-xs">
+          <div className="bg-stone-200/80 p-1 rounded-xl flex text-xs">
             <button
-              onClick={() => setStatementTab('all')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setStatementTab('all');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statementTab === 'all'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Semua (3 Laporan)
             </button>
             <button
-              onClick={() => setStatementTab('labarugi')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setStatementTab('labarugi');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statementTab === 'labarugi'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Laba Rugi
             </button>
             <button
-              onClick={() => setStatementTab('ekuitas')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setStatementTab('ekuitas');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statementTab === 'ekuitas'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Perubahan Ekuitas
             </button>
             <button
-              onClick={() => setStatementTab('neraca')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setStatementTab('neraca');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statementTab === 'neraca'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Neraca (Posisi Keuangan)
@@ -98,12 +125,69 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
 
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-2xs"
-            title="Cetak Laporan Keuangan"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#181512] hover:bg-stone-800 rounded-xl shadow-xs transition-colors cursor-pointer"
+            title="Cetak Laporan Keuangan Resmi"
           >
-            <Printer className="w-3.5 h-3.5 text-slate-500" />
-            <span>Cetak</span>
+            <Printer className="w-3.5 h-3.5 text-amber-400" />
+            <span>Cetak / PDF</span>
           </button>
+        </div>
+      </div>
+
+      {/* Official Kop Surat Perusahaan / Indonesian Merchant Letterhead Header */}
+      <div className="bg-[#fffefc] rounded-3xl border border-[#e8e2d8] p-6 shadow-sm text-center relative overflow-hidden">
+        <div className="max-w-2xl mx-auto space-y-1">
+          <div className="flex items-center justify-center gap-2.5 pb-1">
+            <img
+              src="/src/assets/images/sentosa_brand_crest_1792472442881.jpg"
+              alt="Logo Sentosa"
+              className="w-10 h-10 rounded-xl object-cover ring-2 ring-amber-600/30"
+            />
+            <div className="text-left">
+              <h1 className="text-lg font-serif-brand font-bold text-stone-900 tracking-wide">
+                SENTOSA ROASTERY &amp; MERCANTILE
+              </h1>
+              <p className="text-[10px] text-stone-500 font-mono">
+                NPWP: 01.234.567.8-901.000 · Jl. Asia Afrika No. 45, Bandung
+              </p>
+            </div>
+          </div>
+          <div className="h-0.5 bg-stone-900 w-full mx-auto my-2" />
+          <h2 className="text-sm font-bold text-stone-800 uppercase tracking-widest font-sans">
+            Laporan Keuangan Berdasarkan SAK EMKM
+          </h2>
+          <p className="text-xs text-stone-500 font-mono">
+            Periode Berjalan: Tahun Buku 2026 · Metode FIFO (First-In, First-Out)
+          </p>
+        </div>
+
+        {/* Financial Ratio Chips */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5 mt-4 border-t border-stone-100 text-xs text-left">
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200">
+            <span className="text-[10px] font-mono uppercase text-stone-500 block">Gross Profit Margin</span>
+            <span className="text-base font-bold font-mono text-stone-900 tabular-nums">
+              {grossProfitMargin}%
+            </span>
+            <span className="text-[10px] text-stone-400 block mt-0.5">Persentase laba kotor terhadap omzet</span>
+          </div>
+
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200">
+            <span className="text-[10px] font-mono uppercase text-stone-500 block">Net Profit Margin</span>
+            <span className={`text-base font-bold font-mono tabular-nums ${
+              laba_rugi.laba_bersih >= 0 ? 'text-emerald-700' : 'text-rose-700'
+            }`}>
+              {netProfitMargin}%
+            </span>
+            <span className="text-[10px] text-stone-400 block mt-0.5">Persentase laba bersih setelah beban</span>
+          </div>
+
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200">
+            <span className="text-[10px] font-mono uppercase text-stone-500 block">Solvabilitas (Rasio Lancar)</span>
+            <span className="text-base font-bold font-mono text-amber-900 tabular-nums">
+              {currentRatio}
+            </span>
+            <span className="text-[10px] text-stone-400 block mt-0.5">Rasio Aset Lancar terhadap Liabilitas</span>
+          </div>
         </div>
       </div>
 
@@ -374,9 +458,9 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-3 border-t-2 border-slate-900 flex justify-between font-bold text-sm text-slate-900">
-                  <span>TOTAL ASET</span>
-                  <span className="font-mono text-indigo-700 tabular-nums">
+                <div className="pt-3 border-t-2 border-b-4 border-double border-slate-900 flex justify-between font-bold text-sm text-slate-900 py-1">
+                  <span>TOTAL ASET (AKTIVA)</span>
+                  <span className="font-mono text-slate-900 tabular-nums">
                     {formatRupiah(neraca.total_aset)}
                   </span>
                 </div>
@@ -386,7 +470,7 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
               <div className="space-y-3 p-4 rounded-xl bg-slate-50/70 border border-slate-200/80">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                   <h4 className="font-bold text-slate-900 uppercase tracking-wider text-xs">
-                    LIABILITAS &amp; EKUITAS
+                    LIABILITAS &amp; EKUITAS (PASIVA)
                   </h4>
                   <span className="font-mono text-[11px] text-slate-500">Saldo Normal: KREDIT</span>
                 </div>
@@ -428,9 +512,9 @@ export const FinancialStatements: React.FC<FinancialStatementsProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-3 border-t-2 border-slate-900 flex justify-between font-bold text-sm text-slate-900">
+                <div className="pt-3 border-t-2 border-b-4 border-double border-slate-900 flex justify-between font-bold text-sm text-slate-900 py-1">
                   <span>TOTAL LIABILITAS &amp; EKUITAS</span>
-                  <span className="font-mono text-indigo-700 tabular-nums">
+                  <span className="font-mono text-slate-900 tabular-nums">
                     {formatRupiah(neraca.total_liabilitas_dan_ekuitas)}
                   </span>
                 </div>

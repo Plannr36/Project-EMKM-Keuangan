@@ -38,6 +38,7 @@ import {
   generateSaleJournals,
   generatePurchaseJournal,
   generateExpenseJournal,
+  generateEquityJournal,
   postJournalsToLedger,
   calculateFinancialStatements,
 } from './utils/accountingEngine';
@@ -50,7 +51,17 @@ export default function App() {
   // Core application states
   const [products, setProducts] = useState<Produk[]>(() => {
     const saved = localStorage.getItem(`${STORAGE_KEY}_products`);
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    if (!saved) return INITIAL_PRODUCTS;
+    try {
+      const parsed: Produk[] = JSON.parse(saved);
+      // Ensure image paths from INITIAL_PRODUCTS are attached if missing
+      return parsed.map(p => {
+        const init = INITIAL_PRODUCTS.find(ip => ip.produk_id === p.produk_id);
+        return { ...p, gambar: p.gambar || init?.gambar };
+      });
+    } catch {
+      return INITIAL_PRODUCTS;
+    }
   });
 
   const [batches, setBatches] = useState<PersediaanBatch[]>(() => {
@@ -102,7 +113,8 @@ export default function App() {
   const handleProcessCheckout = (
     customerId: number,
     paymentMethod: 'tunai' | 'kredit',
-    cart: Array<{ produk: Produk; kuantitas: number }>
+    cart: Array<{ produk: Produk; kuantitas: number }>,
+    cashTendered?: number
   ) => {
     const customer = customers.find(c => c.pelanggan_id === customerId) || customers[0];
     const txId = transactions.length + 1;
@@ -164,6 +176,9 @@ export default function App() {
       });
     }
 
+    const tenderAmount = cashTendered || grandTotalPenjualan;
+    const changeAmount = paymentMethod === 'tunai' ? Math.max(0, tenderAmount - grandTotalPenjualan) : 0;
+
     const newTransaction: Transaksi = {
       transaksi_id: txId,
       nomor_invoice: invNumber,
@@ -174,6 +189,8 @@ export default function App() {
       total_penjualan: grandTotalPenjualan,
       total_hpp: grandTotalHpp,
       laba_kotor: grandTotalPenjualan - grandTotalHpp,
+      uang_diterima: tenderAmount,
+      kembalian: changeAmount,
       status: 'selesai',
       items: txDetails,
     };
@@ -300,6 +317,26 @@ export default function App() {
     setJournals([...journals, expenseJournal]);
   };
 
+  // Handle Owner Equity Transactions (Prive / Setor Modal)
+  const handleEquityTransaction = (
+    type: 'prive' | 'setor_modal',
+    amount: number,
+    memo: string,
+    date: string
+  ) => {
+    const nextJId = journals.length > 0 ? Math.max(...journals.map(j => j.jurnal_id)) + 1 : 1;
+    const { journal: equityJournal } = generateEquityJournal(
+      type,
+      amount,
+      memo,
+      date,
+      updatedAccounts,
+      nextJId
+    );
+
+    setJournals([...journals, equityJournal]);
+  };
+
   // Handle Adding Customer
   const handleAddCustomer = (nama: string, telepon: string, alamat: string) => {
     const newId = customers.length > 0 ? Math.max(...customers.map(c => c.pelanggan_id)) + 1 : 1;
@@ -360,7 +397,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900 antialiased">
+    <div className="min-h-screen bg-[#faf7f2] flex flex-col text-stone-900 antialiased selection:bg-amber-200 selection:text-amber-950">
       {/* Top Navigation & Financial Stats Ribbon */}
       <Header
         financials={financialStatements}
@@ -368,6 +405,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         onResetData={handleResetData}
         onSimulateExample={handleSimulateExample}
+        onAddEquityTransaction={handleEquityTransaction}
       />
 
       {/* Main View Area */}
@@ -425,20 +463,33 @@ export default function App() {
             customers={customers}
             transactions={transactions}
             onAddCustomer={handleAddCustomer}
+            onSelectCustomerForPos={() => {
+              setActiveTab('pos');
+            }}
           />
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-4 px-4 sm:px-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>
-            <span className="font-semibold text-slate-700">ERP Mini UMKM</span> — Sistem Akuntansi Ganda &amp; Persediaan FIFO Real-Time
+      {/* Footer with Distinctive Artisan Merchant Seal */}
+      <footer className="bg-[#1e1b18] text-[#d6ccc2] border-t border-[#3a3530] py-6 px-4 sm:px-8 text-xs">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <div>
+              <span className="font-serif-brand font-bold text-amber-200 tracking-wide">
+                Sentosa Artisan Roastery &amp; Mercantile
+              </span>
+              <span className="text-[#a89f91] ml-2 text-[11px]">
+                — ERP UMKM: FIFO Persediaan &amp; Double-Entry SAK EMKM Real-Time
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-slate-500">
-            <span>Standar SAK EMKM</span>
-            <span>·</span>
-            <span>Persamaan: Aset = Liabilitas + Ekuitas</span>
+          <div className="flex items-center gap-4 text-[11px] text-[#a89f91]">
+            <span className="px-2 py-0.5 rounded bg-[#2a2622] border border-[#3f3933] font-mono text-amber-300">
+              Persamaan Akuntansi: Aset = Liabilitas + Ekuitas
+            </span>
+            <span className="hidden sm:inline">·</span>
+            <span>Est. 2024 · Bandung, Jawa Barat</span>
           </div>
         </div>
       </footer>

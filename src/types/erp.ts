@@ -21,6 +21,7 @@ export interface Produk {
   satuan: string;
   stok_total: number;
   deskripsi?: string;
+  gambar?: string;
 }
 
 export interface PersediaanBatch {
@@ -68,6 +69,8 @@ export interface Transaksi {
   total_penjualan: number;
   total_hpp: number;
   laba_kotor: number;
+  uang_diterima?: number;
+  kembalian?: number;
   status: 'selesai' | 'batal';
   items: TransaksiDetail[];
   catatan?: string;

@@ -231,6 +231,83 @@ export function generateExpenseJournal(
 }
 
 /**
+ * Membuat jurnal penarikan prive atau penyetoran modal pemilik
+ * Prive: Dr. Prive (3-3000), Cr. Kas (1-1000)
+ * Setor Modal: Dr. Kas (1-1000), Cr. Modal Pemilik (3-1000)
+ */
+export function generateEquityJournal(
+  type: 'prive' | 'setor_modal',
+  amount: number,
+  memo: string,
+  tanggal: string,
+  accounts: ChartOfAccounts[],
+  nextJournalId: number
+): { journal: JurnalUmum; nextJournalId: number } {
+  const kasAcc = accounts.find(a => a.kode_akun === '1-1000')!;
+  const jId = nextJournalId;
+  const journalNumber = `JU-${type === 'prive' ? 'PRV' : 'CAP'}-${Date.now().toString().slice(-6)}`;
+
+  let details: JurnalDetail[] = [];
+
+  if (type === 'prive') {
+    const priveAcc = accounts.find(a => a.kode_akun === '3-3000')!;
+    details = [
+      {
+        jurnal_detail_id: jId * 10 + 1,
+        jurnal_id: jId,
+        akun_id: priveAcc.akun_id,
+        kode_akun: priveAcc.kode_akun,
+        nama_akun: priveAcc.nama_akun,
+        debit: amount,
+        kredit: 0,
+      },
+      {
+        jurnal_detail_id: jId * 10 + 2,
+        jurnal_id: jId,
+        akun_id: kasAcc.akun_id,
+        kode_akun: kasAcc.kode_akun,
+        nama_akun: kasAcc.nama_akun,
+        debit: 0,
+        kredit: amount,
+      },
+    ];
+  } else {
+    const modalAcc = accounts.find(a => a.kode_akun === '3-1000')!;
+    details = [
+      {
+        jurnal_detail_id: jId * 10 + 1,
+        jurnal_id: jId,
+        akun_id: kasAcc.akun_id,
+        kode_akun: kasAcc.kode_akun,
+        nama_akun: kasAcc.nama_akun,
+        debit: amount,
+        kredit: 0,
+      },
+      {
+        jurnal_detail_id: jId * 10 + 2,
+        jurnal_id: jId,
+        akun_id: modalAcc.akun_id,
+        kode_akun: modalAcc.kode_akun,
+        nama_akun: modalAcc.nama_akun,
+        debit: 0,
+        kredit: amount,
+      },
+    ];
+  }
+
+  const journal: JurnalUmum = {
+    jurnal_id: jId,
+    nomor_jurnal: journalNumber,
+    tanggal_jurnal: tanggal,
+    keterangan: type === 'prive' ? `Penarikan Prive Pemilik: ${memo}` : `Penyetoran Modal Pemilik: ${memo}`,
+    tipe_jurnal: 'umum',
+    details,
+  };
+
+  return { journal, nextJournalId: nextJournalId + 1 };
+}
+
+/**
  * Posting seluruh baris jurnal ke Buku Besar (General Ledger) (Langkah 4)
  * Menghitung saldo kumulatif kronologis per akun dengan mempertimbangkan saldo normal.
  */

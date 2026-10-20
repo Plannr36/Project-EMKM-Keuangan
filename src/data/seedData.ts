@@ -57,6 +57,7 @@ export const INITIAL_PRODUCTS: Produk[] = [
     satuan: 'pack',
     stok_total: 15,
     deskripsi: 'Biji kopi pilihan roasted medium, aroma floral & citrus khas dataran tinggi Gayo.',
+    gambar: '/src/assets/images/kopi_gayo_craft_1792472425395.jpg',
   },
   {
     produk_id: 102,
@@ -67,6 +68,7 @@ export const INITIAL_PRODUCTS: Produk[] = [
     satuan: 'karung',
     stok_total: 20,
     deskripsi: 'Beras pulen alami tanpa pemutih & pewangi kimia, aroma pandan alami.',
+    gambar: '/src/assets/images/beras_pandan_craft_1792472425262.jpg',
   },
   {
     produk_id: 103,
@@ -77,6 +79,7 @@ export const INITIAL_PRODUCTS: Produk[] = [
     satuan: 'pouch',
     stok_total: 25,
     deskripsi: 'Minyak goreng kelapa sawit murni 2x penyaringan, jernih & tahan panas.',
+    gambar: '/src/assets/images/minyak_sawit_craft_1792472426395.jpg',
   },
   {
     produk_id: 104,
@@ -87,6 +90,7 @@ export const INITIAL_PRODUCTS: Produk[] = [
     satuan: 'kg',
     stok_total: 30,
     deskripsi: 'Gula tebu kristal bersih manis alami berstandar SNI.',
+    gambar: '/src/assets/images/gula_pasir_craft_1792472426698.jpg',
   },
 ];
 

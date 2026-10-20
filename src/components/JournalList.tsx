@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import {
   FileSpreadsheet,
@@ -16,6 +11,7 @@ import {
 } from 'lucide-react';
 import { JurnalUmum, ChartOfAccounts, TipeJurnal } from '../types/erp';
 import { formatRupiah, formatTanggal } from '../utils/formatters';
+import { playTapSound } from '../utils/soundEffects';
 
 interface JournalListProps {
   journals: JurnalUmum[];
@@ -87,36 +83,39 @@ export const JournalList: React.FC<JournalListProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Jurnal Umum Otomatis &amp; Pembukuan Ganda
+            <h2 className="text-2xl font-serif-brand font-bold text-stone-900 tracking-tight">
+              Jurnal Umum &amp; Pembukuan Ganda
             </h2>
-            <span className="text-xs text-slate-500">·</span>
-            <span className="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-sm whitespace-nowrap shrink-0">
-              Langkah 3 (Double-Entry)
+            <span className="text-xs text-stone-300">·</span>
+            <span className="text-[11px] font-mono text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+              Langkah 3 (Double-Entry Otomatis)
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Daftar seluruh ayat jurnal (Jurnal Penjualan, Jurnal HPP FIFO, Jurnal Pembelian, &amp; Beban Operasional)
+          <p className="text-xs text-stone-600 mt-1">
+            Daftar seluruh ayat jurnal sistem (Jurnal Penjualan, Jurnal HPP FIFO, Jurnal Pembelian, &amp; Beban Operasional)
           </p>
         </div>
 
         <button
-          onClick={() => setIsExpenseModalOpen(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-2xs self-start sm:self-auto"
+          onClick={() => {
+            playTapSound();
+            setIsExpenseModalOpen(true);
+          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-amber-200 bg-[#181512] hover:bg-stone-800 rounded-xl transition-all shadow-xs self-start sm:self-auto cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-3.5 h-3.5 text-amber-400" />
           <span>+ Catat Beban Operasional</span>
         </button>
       </div>
 
       {/* Ribbon Balance Check */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-900 block">
+            <span className="text-xs font-bold text-slate-900 block font-sans">
               Prinsip Keseimbangan Double-Entry Bookkeeping
             </span>
             <span className="text-xs text-slate-500 block">
@@ -127,17 +126,17 @@ export const JournalList: React.FC<JournalListProps> = ({
 
         <div className="flex items-center gap-6 font-mono text-xs tabular-nums">
           <div>
-            <span className="text-slate-500 block text-[11px]">Total Debit:</span>
-            <span className="font-bold text-slate-900">{formatRupiah(totalDebit)}</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-sans">Total Debit:</span>
+            <span className="font-bold text-slate-900 text-sm">{formatRupiah(totalDebit)}</span>
           </div>
           <div>
-            <span className="text-slate-500 block text-[11px]">Total Kredit:</span>
-            <span className="font-bold text-slate-900">{formatRupiah(totalKredit)}</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-sans">Total Kredit:</span>
+            <span className="font-bold text-slate-900 text-sm">{formatRupiah(totalKredit)}</span>
           </div>
           <div className="pl-4 border-l border-slate-200">
-            <span className="text-slate-500 block text-[11px]">Status Keseimbangan:</span>
-            <span className={`font-semibold ${isAllBalanced ? 'text-emerald-700' : 'text-red-700'}`}>
-              {isAllBalanced ? '✅ Seimbang (0.00)' : '⚠️ Tidak Seimbang'}
+            <span className="text-slate-400 block text-[10px] uppercase font-sans">Status Audit:</span>
+            <span className={`font-bold ${isAllBalanced ? 'text-emerald-700' : 'text-red-700'}`}>
+              {isAllBalanced ? '✅ SEIMBANG (0.00)' : '⚠️ TIDAK SEIMBANG'}
             </span>
           </div>
         </div>

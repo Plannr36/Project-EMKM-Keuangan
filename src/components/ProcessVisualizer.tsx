@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Transaksi, JurnalUmum } from '../types/erp';
 import { formatRupiah, formatTanggal } from '../utils/formatters';
+import { playTapSound } from '../utils/soundEffects';
 
 interface ProcessVisualizerProps {
   transactions: Transaksi[];
@@ -46,37 +47,43 @@ export const ProcessVisualizer: React.FC<ProcessVisualizerProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Visualisasi Alur Logika Bisnis &amp; Arsitektur Sistem
+            <h2 className="text-2xl font-serif-brand font-bold text-stone-900 tracking-tight">
+              Peta Alur Transaksi &amp; Arsitektur Sistem
             </h2>
-            <span className="text-xs text-slate-500">·</span>
-            <span className="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-sm whitespace-nowrap shrink-0">
-              5 Langkah Terpadu
+            <span className="text-xs text-stone-300">·</span>
+            <span className="text-[11px] font-mono text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+              5 Langkah Terpadu SAK EMKM
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Pelajari bagaimana setiap checkout kasir mengalir melalui metode FIFO, jurnal otomatis, buku besar, hingga neraca
+          <p className="text-xs text-stone-600 mt-1">
+            Pelajari bagaimana setiap checkout kasir mengalir melalui metode FIFO, jurnal ganda otomatis, buku besar, hingga neraca
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="bg-slate-100 p-1 rounded-lg flex text-xs">
+          <div className="bg-stone-200/80 p-1 rounded-xl flex text-xs">
             <button
-              onClick={() => setActiveView('flow')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setActiveView('flow');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 activeView === 'flow'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Alur 5 Langkah (Flowchart)
             </button>
             <button
-              onClick={() => setActiveView('erd')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              onClick={() => {
+                playTapSound();
+                setActiveView('erd');
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 activeView === 'erd'
-                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-stone-900 shadow-xs font-bold'
+                  : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Struktur Database (ERD)
@@ -89,15 +96,15 @@ export const ProcessVisualizer: React.FC<ProcessVisualizerProps> = ({
         <div className="space-y-6">
           {/* Interactive Transaction Inspector */}
           {transactions.length > 0 && (
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 pb-2 border-b border-slate-100">
+            <div className="bg-[#fffdfa] rounded-2xl border border-[#e8e2d8] p-4 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 pb-2 border-b border-stone-200">
                 <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  <Info className="w-4 h-4 text-amber-700" />
+                  <span className="text-xs font-bold text-stone-900 uppercase tracking-wider">
                     Pilih Transaksi untuk Melihat Jejak Alur Nyata:
                   </span>
                 </div>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-stone-500 font-mono">
                   {transactions.length} Transaksi Tercatat
                 </span>
               </div>
@@ -106,11 +113,14 @@ export const ProcessVisualizer: React.FC<ProcessVisualizerProps> = ({
                 {transactions.map(tx => (
                   <button
                     key={tx.transaksi_id}
-                    onClick={() => setSelectedTxId(tx.transaksi_id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-2 ${
+                    onClick={() => {
+                      playTapSound();
+                      setSelectedTxId(tx.transaksi_id);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 cursor-pointer ${
                       selectedTxId === tx.transaksi_id
-                        ? 'bg-indigo-600 text-white font-bold shadow-xs'
-                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                        ? 'bg-[#181512] text-amber-200 font-bold shadow-xs'
+                        : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
                     }`}
                   >
                     <span>{tx.nomor_invoice}</span>
