@@ -1,0 +1,6 @@
+{
+  "name": "ERP Mini UMKM - Akuntansi & FIFO Real-Time",
+  "description": "Sistem ERP mini untuk UMKM dengan alur otomatis dari Checkout Kasir, Alokasi Persediaan FIFO, Jurnal Umum Ganda, Buku Besar, hingga Laporan Keuangan Real-Time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
